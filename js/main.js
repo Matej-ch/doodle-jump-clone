@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded',() => {
     let isGameOver = false;
     let platformCount = 5;
     let platforms= [];
+    let upTimerId;
+    let downTimerId;
+    let movePlatformsTimerId;
+    let isJumping = false;
 
     class Platform {
         constructor(newPlatBottom) {
@@ -25,6 +29,7 @@ document.addEventListener('DOMContentLoaded',() => {
     function createDoodler() {
         grid.appendChild(doodler);
         doodler.classList.add('doodler');
+        doodlerLeftSpace = platforms[0].left;
         doodler.style.left = `${doodlerLeftSpace}px`;
         doodler.style.bottom = `${doodlerBottomSpace}px`;
     }
@@ -48,13 +53,58 @@ document.addEventListener('DOMContentLoaded',() => {
         }
     }
 
+    function jump() {
+        clearInterval(downTimerId);
+        isJumping = true;
+        upTimerId = setInterval(function () {
+            doodlerBottomSpace += 20;
+            doodler.style.bottom = doodlerBottomSpace + 'px';
+            if(doodlerBottomSpace > 350) {
+                fall();
+            }
+        },30);
+    }
+
+    function fall() {
+        clearInterval(upTimerId);
+        isJumping = false;
+        downTimerId = setInterval(function () {
+            doodlerBottomSpace -= 5;
+            doodler.style.bottom = doodlerBottomSpace + 'px';
+            if(doodlerBottomSpace <= 0) {
+                gameOver();
+            }
+        },30);
+    }
+
+    function control(e) {
+        if(e.key === 'ArrowLeft') {
+
+        }
+
+        if(e.key === 'ArrowRight') {
+
+        }
+
+        if(e.key === 'ArrowUp') {
+
+        }
+    }
+
     function start() {
         if(!isGameOver) {
-            createDoodler();
             createPlatforms();
-            setInterval(movePlatforms,30);
+            createDoodler();
+            movePlatformsTimerId = setInterval(movePlatforms,30);
             jump();
         }
+    }
+
+    function gameOver() {
+        isGameOver = true;
+        clearInterval(upTimerId);
+        clearInterval(downTimerId);
+        clearInterval(movePlatformsTimerId);
     }
 
     /** @todo attach to button, dont start automatically */
