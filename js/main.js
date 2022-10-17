@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded',() => {
     const grid = document.querySelector('.grid');
     const doodler = document.createElement('div');
+    const startBtn = document.getElementById('start-button');
+    const scoreEl = document.getElementById('score');
+
     let doodlerLeftSpace = 50;
     let startPoint = 150;
     let doodlerBottomSpace = startPoint;
@@ -41,6 +44,7 @@ document.addEventListener('DOMContentLoaded',() => {
     }
 
     function createPlatforms() {
+        platforms = [];
         for(let i = 0; i < platformCount; i++) {
             let platformGap = 600 / platformCount;
             let newPlatBottom = 100 + i * platformGap;
@@ -106,20 +110,26 @@ document.addEventListener('DOMContentLoaded',() => {
     }
 
     function control(e) {
-        if(e.key === 'ArrowLeft') {
+        if(e.code === 'ArrowLeft' || e.code === 'KeyA') {
             moveLeft();
         }
 
-        if(e.key === 'ArrowRight') {
+        if(e.code === 'ArrowRight' || e.code === 'KeyD') {
             moveRight();
         }
 
-        if(e.key === 'ArrowUp') {
+        if(e.code === 'ArrowUp' || e.code === 'KeyW') {
             moveStraight();
         }
     }
 
     function moveLeft() {
+
+        clearInterval(leftTimerId);
+        clearInterval(rightTimerId);
+        isGoingRight = false;
+        isGoingLeft = true;
+
         if(isGoingRight) {
             clearInterval(rightTimerId);
             isGoingRight = false;
@@ -134,6 +144,11 @@ document.addEventListener('DOMContentLoaded',() => {
     }
 
     function moveRight() {
+        clearInterval(leftTimerId);
+        clearInterval(rightTimerId);
+        isGoingLeft = false;
+        isGoingRight = true;
+
         if(isGoingLeft) {
             clearInterval(leftTimerId);
             isGoingLeft = false;
@@ -170,14 +185,26 @@ document.addEventListener('DOMContentLoaded',() => {
         while(grid.firstChild) {
             grid.removeChild(grid.firstChild);
         }
-        grid.innerHTML = score;
+        scoreEl.innerText = `${score}`;
         clearInterval(upTimerId);
         clearInterval(downTimerId);
         clearInterval(movePlatformsTimerId);
         clearInterval(leftTimerId);
         clearInterval(rightTimerId);
+        isJumping = false;
+        isGoingLeft = false;
+        isGoingRight = false;
+        startBtn.innerText = 'Start';
     }
 
-    /** @todo attach to button, dont start automatically */
-    start();
+    startBtn.addEventListener('click', e=> {
+        if(e.target.innerText === 'Start') {
+            isGameOver = false;
+            e.target.innerText = 'Stop';
+            start();
+        } else {
+            e.target.innerText = 'Start';
+            gameOver();
+        }
+    })
 })

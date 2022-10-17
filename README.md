@@ -1,1 +1,1 @@
-# doodle-jump-clone
+## Clone of doodle jump
